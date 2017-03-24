@@ -48,37 +48,33 @@ make install
 ```
 
 ## Build
+Use make to easily build and run the OS
+* *Build everything* `make`
+* *Build the kernel* `make build/kernel/loader.o`
+* *Link the kernel* `make kernel.elf`
+* *Build the ISO* `make os.iso`
+* *Run the kernel in Bochs* `make run`
+* *Clean up* `make clean`
+
+If you want to build the pieces with out make here are the commands:
+
+Building the kernel
 ```commandline
-# Setup
-mkdir -p build/kernel
-mkdir -p build/iso/boot/grub
-
-# Build the loader
 nasm -f elf32 -o build/kernel/loader.o loader.s
+```
 
-# Link to produce executable
+Linking the kernel
+```commandline
 /usr/local/i386elfgcc/bin/i386-elf-ld -T link.ld -melf_i386 build/kernel/loader.o -o build/iso/boot/kernel.elf
-
-# copy the bootloader
-cp grub/stage2_eltorito build/iso/boot/grub/
-
-# Copy the grub menu
-cp menu.lst build/iso/boot/grub/menu.lst
-
-# Generate bootable ISO
-mkisofs -R \
-        -b boot/grub/stage2_eltorito \
-        -no-emul-boot \
-        -boot-load-size 4 \
-        -A c-os \
-        -input-charset utf8 \
-        -quiet \
-        -boot-info-table \
-        -o build/c-os.iso \
-        build/iso
 ```
 
 ## Running
+```commandline
+make run
+```
+
+or
+
 ```commandline
 ~/opt/bochs/bin/bochs  -f bochsrc.txt -q
 ```
@@ -89,3 +85,9 @@ mkisofs -R \
 * Developing on straight MacOS requires a cross-compiled gcc, the bundled gcc
 in X-Code won't work
 * The bochs available through brew has no display libraries :(
+
+## References
+* [Little OS Book](http://littleosbook.github.io/)
+* [os-tutorial](https://github.com/cfenollosa/os-tutorial)
+* [Writing a Simple Operating System - from Scratch](http://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf)
+* [OSDev](http://wiki.osdev.org/)
