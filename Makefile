@@ -4,6 +4,7 @@ SRC_BASE   = src
 SRC_BOOT   = $(SRC_BASE)/boot
 BUILD_BOOT = $(BUILD_BASE)/boot
 BUILD_KERN = $(BUILD_BASE)/kernel
+ISO_BASE   = $(BUILD_BOOT)
 ISO_FILE   = c-os.iso
 FLP_FILE   = c-os.flp
 
@@ -45,13 +46,13 @@ os.flp: build-boot
 os.iso: build-boot
 	mkisofs                              \
 			-R                           \
-			-A c-os                      \
-			-b c-os.flp                  \
+			-b bootsect.bin              \
 			-no-emul-boot                \
-			-boot-load-size 4            \
-			-boot-info-table             \
 			-o $(BUILD_BASE)/$(ISO_FILE) \
-			$(BUILD_BASE)/
+			$(ISO_BASE)/
+#			-A c-os                      \
+#			-boot-load-size 4            \
+#			-boot-info-table             \
 #			-input-charset utf8          \
 #			-quiet                       \
 

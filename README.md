@@ -62,3 +62,4 @@ in X-Code won't work
 
 * http://mikeos.sourceforge.net/write-your-own-os.html
 * https://github.com/joesavage/bare-bones-bootloader
+* http://www.osdever.net/bkerndev/Docs/title.htm
