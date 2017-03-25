@@ -14,69 +14,35 @@ are mostly the same but details will vary.
 * Requirements listed in above gcc instructions
 * NASM (`brew install nasm`)
 * mkisofs (`brew install cdrtools`)
-* bochs (see below)
+* -bochs (see below)-
+* qemu (`brew install qemu`)
+
+Detailed instructions on environment setup are in the [setup docs](docs/setup.md)
 
 ## Bochs
-I tried `brew install bochs` but there were no display drivers included
-in the build. I found that I had to compile myself
-* Download source from https://sourceforge.net/projects/bochs/files/bochs/
-* Extract
-* configure
-```commandline
-./configure --enable-ne2000 \
-            --enable-all-optimizations \
-            --enable-cpu-level=6 \
-            --enable-x86-64 \
-            --enable-vmx=2 \
-            --enable-pci \
-            --enable-usb \
-            --enable-usb-ohci \
-            --enable-e1000 \
-            --enable-debugger \
-            --enable-disasm \
-            --disable-debugger-gui \
-            --with-sdl \
-            --prefix=$HOME/opt/bochs
-```
-* Make
-```commandline
-make
-```
-* Install
-```commandline
-make install
-```
+For details on setting up and using bochs see the [bochs docs](docs/bochs.md)
 
 ## Build
 Use make to easily build and run the OS
-* *Build everything* `make`
-* *Build the kernel* `make build/kernel/loader.o`
-* *Link the kernel* `make kernel.elf`
+* *Build boot and kernel* `make`
+* *Build the bootloader* `make build-boot`
+* *Build distribution (fld/iso)* `make dist`
 * *Build the ISO* `make os.iso`
-* *Run the kernel in Bochs* `make run`
+* *Build the floppy* `make os.flp`
+* *Run the kernel in Bochs (not working)* `make run-bochs`
+* *Run the kernel in Qemu* `make run-qemu`
 * *Clean up* `make clean`
 
 If you want to build the pieces with out make here are the commands:
 
-Building the kernel
+Building the bootloader
 ```commandline
-nasm -f elf32 -o build/kernel/loader.o loader.s
-```
-
-Linking the kernel
-```commandline
-/usr/local/i386elfgcc/bin/i386-elf-ld -T link.ld -melf_i386 build/kernel/loader.o -o build/iso/boot/kernel.elf
+nasm -f bin src/bootsect.s -o build/boot/bootsect.bin
 ```
 
 ## Running
 ```commandline
-make run
-```
-
-or
-
-```commandline
-~/opt/bochs/bin/bochs  -f bochsrc.txt -q
+make run-qemu
 ```
 
 ## Things I've learned
@@ -91,3 +57,9 @@ in X-Code won't work
 * [os-tutorial](https://github.com/cfenollosa/os-tutorial)
 * [Writing a Simple Operating System - from Scratch](http://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf)
 * [OSDev](http://wiki.osdev.org/)
+
+
+
+* http://mikeos.sourceforge.net/write-your-own-os.html
+* https://github.com/joesavage/bare-bones-bootloader
+* http://www.osdever.net/bkerndev/Docs/title.htm
