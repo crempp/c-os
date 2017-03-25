@@ -1,59 +1,64 @@
-#OBJECTS = build/kernel/loader.o build/kernel/kmain.o
-OBJECTS = build/kernel/loader.o
+# Paths
+BUILD_BASE = build
+SRC_BASE   = src
+BUILD_BOOT = $(BUILD_BASE)/boot
+BUILD_KERN = $(BUILD_BASE)/kernel
+ISO_FILE   = c-os.iso
+FLP_FILE   = c-os.flp
+
+# Build targets
+OBJECTS_BOOT = $(BUILD_BOOT)/bootsect.bin
+OBJECTS_KERN = $(BUILD_KERN)/foo.o
+
+# Compilation
 CC      = /usr/local/i386elfgcc/bin/i386-elf-gcc
 CFLAGS  = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector \
           -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c
 LD      = /usr/local/i386elfgcc/bin/i386-elf-ld
-#LDFLAGS = -T link.ld -Wl,-melf_i386
 LDFLAGS = -T link.ld -melf_i386
 AS      = nasm
-#ASFLAGS = -f elf
-ASFLAGS = -f elf32
+ASFLAGS = -f bin
 
+# Emulators
 BOCHS = ~/opt/bochs/bin/bochs
+QEMU  = /usr/local/bin/qemu-system-x86_64
 
-BUILD_BASE = build
-ISO_BASE = $(BUILD_BASE)/iso
+all: pre-build build-boot build-kern
 
-KERNEL_ELF_DST = $(ISO_BASE)/boot/kernel.elf
-GRUB_SRC = grub/stage2_eltorito
-GRUB_DST = boot/grub/stage2_eltorito
-ISO_DST  = $(ISO_BASE)
-ISO_FILE = c-os.iso
-MENU_SRC = menu.lst
-MENU_DST = boot/grub/menu.lst
+dist: pre-build os.flp os.iso
 
-all: pre-build kernel.elf
+build-boot: $(OBJECTS_BOOT)
+
+#build-kern: $(OBJECTS_KERN)
 
 pre-build:
-	mkdir -p build/kernel
-	mkdir -p build/iso/boot/grub
+	mkdir -p $(BUILD_KERN)
+	mkdir -p $(BUILD_BOOT)
 
-kernel.elf: $(OBJECTS)
-	$(LD) $(LDFLAGS) $(OBJECTS) -o $(KERNEL_ELF_DST)
+$(OBJECTS_BOOT): $(BUILD_BOOT)/%.bin : $(SRC_BASE)/%.s
+	$(AS) $(ASFLAGS) $< -o $@
 
-os.iso: kernel.elf
-	cp $(GRUB_SRC) $(ISO_BASE)/$(GRUB_DST)
-	cp $(MENU_SRC) $(ISO_BASE)/$(MENU_DST)
-	mkisofs -R                  \
-			-b $(GRUB_DST)      \
-			-no-emul-boot       \
-			-boot-load-size 4   \
-			-A c-os             \
-			-input-charset utf8 \
-			-quiet              \
-			-boot-info-table    \
+os.flp: build-boot
+	dd conv=notrunc if=$(BUILD_BOOT)/bootsect.bin of=$(BUILD_BASE)/$(FLP_FILE)
+
+os.iso: build-boot
+	mkisofs                              \
+			-R                           \
+			-A c-os                      \
+			-b c-os.flp                  \
+			-no-emul-boot                \
+			-boot-load-size 4            \
+			-boot-info-table             \
 			-o $(BUILD_BASE)/$(ISO_FILE) \
-			$(ISO_DST)
+			$(BUILD_BASE)/
+#			-input-charset utf8          \
+#			-quiet                       \
 
-run: os.iso
+run-bochs: os.iso
 	$(BOCHS) -f bochsrc.txt -q
 
-#%.o: %.c
-#	$(CC) $(CFLAGS)  $< -o $@
-
-$(OBJECTS): build/kernel/%.o : %.s
-	$(AS) $(ASFLAGS) $< -o $@
+run-qemu: os.flp
+	$(QEMU) -drive format=raw,file=$(BUILD_BASE)/$(FLP_FILE),index=0,if=floppy
 
 clean:
 	rm -rf build
