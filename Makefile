@@ -1,6 +1,7 @@
 # Paths
 BUILD_BASE = build
 SRC_BASE   = src
+SRC_BOOT   = $(SRC_BASE)/boot
 BUILD_BOOT = $(BUILD_BASE)/boot
 BUILD_KERN = $(BUILD_BASE)/kernel
 ISO_FILE   = c-os.iso
@@ -25,7 +26,7 @@ QEMU  = /usr/local/bin/qemu-system-x86_64
 
 all: pre-build build-boot build-kern
 
-dist: pre-build os.flp os.iso
+dist: clean pre-build os.flp os.iso
 
 build-boot: $(OBJECTS_BOOT)
 
@@ -35,7 +36,7 @@ pre-build:
 	mkdir -p $(BUILD_KERN)
 	mkdir -p $(BUILD_BOOT)
 
-$(OBJECTS_BOOT): $(BUILD_BOOT)/%.bin : $(SRC_BASE)/%.s
+$(OBJECTS_BOOT): $(BUILD_BOOT)/%.bin : $(SRC_BOOT)/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
 os.flp: build-boot
