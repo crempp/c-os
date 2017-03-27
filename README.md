@@ -45,6 +45,9 @@ nasm -f bin src/bootsect.s -o build/boot/bootsect.bin
 make run-qemu
 ```
 
+## TODO
+* Disk read retries in bootloader
+
 ## Things I've learned
 * I don't understand Make
 * I don't understand linking

@@ -26,21 +26,16 @@ call print_nl
 
 ; Load kernel and enter protected mode
 call load_kernel             ; read the kernel from disk
-call switch_to_pm            ; disable interrupts, load GDT,  etc. Finally jumps
-                             ; to 'BEGIN_PM'
-
-jmp $ ; Never executed
+call KERNEL_OFFSET           ; Give control to the kernel
+jmp $                        ; Stay here when the kernel returns control to us
+                             ; (if ever)
 
 
 ; remember to include subroutines below the hang
 %include "src/boot/print.s"
 %include "src/boot/disk.s"
-%include "src/boot/32-gdt.s"
-%include "src/boot/32-print.s"
-%include "src/boot/32-switch.s"
 
 
-[bits 16]
 load_kernel:
     mov bx, MSG_LOAD_KERNEL
     call print
@@ -51,19 +46,9 @@ load_kernel:
     ret
 
 
-[bits 32]
-BEGIN_PM:
-    mov ebx, MSG_PROT_MODE
-    call print_pm
-    call KERNEL_OFFSET       ; Give control to the kernel
-    jmp $                    ; Stay here when the kernel returns control to us
-                             ; (if ever)
-
-
 ; data
 BOOT_DRIVE: db 0             ; It is a good idea to store it in memory because
                              ; 'dl' may get overwritten
-MSG_PROT_MODE:   db "32-bit Protected Mode", 0
 MSG_LOAD_KERNEL: db "Loading kernel into memory", 0
 BIOS_HEAD:
     db 'C-OS-86 0.1', 10
