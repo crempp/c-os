@@ -51,6 +51,7 @@ make run-qemu
 * Developing on straight MacOS requires a cross-compiled gcc, the bundled gcc
 in X-Code won't work
 * The bochs available through brew has no display libraries :(
+* The 512 bytes available to the bootloader is not a lot.
 
 ## References
 * [Little OS Book](http://littleosbook.github.io/)
