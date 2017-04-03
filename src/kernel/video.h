@@ -9,4 +9,8 @@
  */
 void clear_screen();
 
+void b_print(char*);
+
+void os_move_cursor();
+
 #endif /* INCLUDE_IO_H */

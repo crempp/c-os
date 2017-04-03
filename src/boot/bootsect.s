@@ -12,8 +12,10 @@
 
 KERNEL_OFFSET equ 0x1000     ; The memory location of the kernel. This is the
                              ; same location we use when linking the kernel
+STACK_ADDR equ 0x9000
+
 mov [BOOT_DRIVE], dl         ; The BIOS sets the boot drive in 'dl' on boot
-mov bp, 0x9000               ; set the stack safely away from us
+mov bp, STACK_ADDR           ; set the stack safely away from us
 mov sp, bp
 
 ; Print 16 bit header

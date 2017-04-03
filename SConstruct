@@ -1,5 +1,9 @@
 import os
 
+OWROOT       = '~/opt/open-watcom-v2'
+OWBINDIR     = '%s/build/bin' % OWROOT
+OWSRCDIR     = '%s/bld' % OWROOT
+
 BUILD_BASE   = 'build'
 SRC_BASE     = 'src'
 SRC_BOOT     = '%s/boot'   % SRC_BASE
@@ -25,16 +29,21 @@ flpbld = Builder(action     ='cat $SOURCES > $TARGET',
                  suffix     = '.flp',
                  src_suffix = '.bin')
 
+cppbld = Builder(action ='$CC $CCFLAGS $SOURCES -fo=$TARGET')
+
+lnkbld = Builder(action ='$LINK @linkerscript.lnk')
+
 env_kernel = Environment(
-    CC        = '/usr/local/i386elfgcc/bin/i386-elf-gcc',
-    CCFLAGS   = '-ffreestanding',
-    ASFLAGS   = '-f elf',
-    LINK      = '/usr/local/i386elfgcc/bin/i386-elf-ld',
-    LIBPREFIX = '',
-    LIBSUFFIX = '.bin',
-    LINKFLAGS = '-Ttext 0x1000 --oformat binary',
-    tools     = ['default', 'gcc', 'nasm'],
-    BUILDERS  = {'Flp' : flpbld}
+    CC        = '%s/bwcc' % OWBINDIR,
+    CCFLAGS   = '-0 -zl -s -od',
+    ASFLAGS   = '-f obj',
+    LINK      = '%s/bwlink' % OWBINDIR,
+    tools     = ['default', 'nasm'],
+    BUILDERS  = {
+        'Flp'   : flpbld,
+        'Wcc'   : cppbld,
+        'Wlink' : lnkbld
+    }
 )
 
 env_boot_asm = Environment(
@@ -46,15 +55,21 @@ env_boot_asm = Environment(
 env_boot_asm.Object(BOOTSECT_BIN, BOOTSECT_SRC)
 
 # Build the kernel objects
-KERN_SOURCES = env_kernel.Glob('%s/*.[cs]' % SRC_KERN)
-kernel_objs = [
+KERN_SOURCES = env_kernel.Glob('%s/*.[s]' % SRC_KERN)
+kernel_s_objs = [
     env_kernel.Object(
+        '%s/%s.o' % (BUILD_KERN, os.path.splitext(os.path.split(str(src))[1])[0]),
+        src
+    ) for src in KERN_SOURCES]
+KERN_SOURCES = env_kernel.Glob('%s/*.[c]' % SRC_KERN)
+kernel_c_objs = [
+    env_kernel.Wcc(
         '%s/%s.o' % (BUILD_KERN, os.path.splitext(os.path.split(str(src))[1])[0]),
         src
     ) for src in KERN_SOURCES]
 
 # Link the object files
-env_kernel.Program(KERN_BIN, kernel_objs)
+env_kernel.Wlink(KERN_BIN, kernel_s_objs + kernel_c_objs)
 
 # Build floppy disk image
 env_kernel.Flp('%s/%s' % (BUILD_BASE, FLP_FILE),

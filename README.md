@@ -55,15 +55,10 @@ make run-qemu
 in X-Code won't work
 * The bochs available through brew has no display libraries :(
 * The 512 bytes available to the bootloader is not a lot.
+* GCC can not compile true 16-bit code. Looking for bcc/ld86
 
 ## References
 * [Little OS Book](http://littleosbook.github.io/)
 * [os-tutorial](https://github.com/cfenollosa/os-tutorial)
 * [Writing a Simple Operating System - from Scratch](http://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf)
 * [OSDev](http://wiki.osdev.org/)
-
-
-
-* http://mikeos.sourceforge.net/write-your-own-os.html
-* https://github.com/joesavage/bare-bones-bootloader
-* http://www.osdever.net/bkerndev/Docs/title.htm
