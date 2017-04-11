@@ -1,4 +1,4 @@
-## Bochs
+## Installing Bochs from Source
 I tried `brew install bochs` but there were no display drivers included
 in the build. I found that I had to compile myself
 * Download source from https://sourceforge.net/projects/bochs/files/bochs/
