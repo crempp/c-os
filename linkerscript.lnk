@@ -1,14 +1,26 @@
 name build/kernel/kernel.bin      # name of resulting binary
+
 output raw                        # type of binary (ELF, PE, MZ, PharLap, ...)
     offset=0x1000                 #
+
 file build/kernel/kernel-entry.o  # objects to link - this one has to be first
 file build/kernel/kernel.o
-# file build/kernel/video.o
+file build/kernel/video.o
 # add more obj files here
+
 order                             # in which order should segments be put into binary
-    clname CODE offset=0x1000     # offset for reference fixups
+    clname CODE
+        segaddr=0x0100
+        offset=0x0000            # offset for reference fixups
+        segment _TEXT
     clname DATA
+        segaddr=0x0200
+        segment CONST
+        segment CONST2
+        segment _DATA
+
 option NOCASEEXACT
 option map
-# option stack=1k
 option NODEFAULTLIBS, START=_cstart_
+
+disable 1014                      # Silence `Warning! W1014: stack segment not found`

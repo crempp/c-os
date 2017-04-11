@@ -49,13 +49,15 @@ make run-qemu
 * Disk read retries in bootloader
 
 ## Things I've learned
-* I don't understand Make
-* I don't understand linking
+* I don't understand Make.
+* I don't understand linking.
 * Developing on straight MacOS requires a cross-compiled gcc, the bundled gcc
-in X-Code won't work
-* The bochs available through brew has no display libraries :(
+in X-Code won't work.
+* The bochs available through brew has no display libraries :(.
 * The 512 bytes available to the bootloader is not a lot.
-* GCC can not compile true 16-bit code. Looking for bcc/ld86
+* GCC can not compile true 16-bit code. Watcom is a good 16-bit compiler.
+* Watcom is old and not easy to setup on a Mac.
+* Watcom doesn't follow the same argument passing conventions as gcc.
 
 ## References
 * [Little OS Book](http://littleosbook.github.io/)

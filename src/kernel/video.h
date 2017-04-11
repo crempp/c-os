@@ -9,7 +9,7 @@
  */
 void clear_screen();
 
-void b_print(char*);
+void b_print(char *message);
 
 void os_move_cursor();
 
