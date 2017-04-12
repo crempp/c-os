@@ -11,5 +11,15 @@ void _cstart() {
 
     do_a_thing(b);
 
-    b_print(message);
+    v_print("This text should not display");
+
+    v_clrscr();
+
+    v_mvcurs(15, 12); // row, col
+
+    v_print(message);
+
+    v_printnl();
+
+    v_printhex(0xBABE);
 }

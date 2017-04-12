@@ -11,16 +11,15 @@ file build/kernel/video.o
 order                             # in which order should segments be put into binary
     clname CODE
         segaddr=0x0100
-        offset=0x0000            # offset for reference fixups
         segment _TEXT
     clname DATA
-        segaddr=0x0200
-        segment CONST
-        segment CONST2
-        segment _DATA
+        segment CONST  segaddr=0x0200 offset=0x0100
+        segment CONST2 segaddr=0x0200 offset=0x0200
+        segment _DATA  segaddr=0x0200 offset=0x0300
 
 option NOCASEEXACT
 option map
 option NODEFAULTLIBS, START=_cstart_
+option verbose
 
 disable 1014                      # Silence `Warning! W1014: stack segment not found`

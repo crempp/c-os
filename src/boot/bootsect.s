@@ -28,7 +28,7 @@ KERNEL_OFFSET   equ 0x1000 ; Offset used to load kernel
 KERNEL_SECTOR   equ 0x02
 KERNEL_CYLINDER equ 0x00
 KERNEL_HEAD     equ 0x00
-SECTORS_TO_READ equ 9      ; Number of sectors from disk to read (512b each)
+SECTORS_TO_READ equ 16      ; Number of sectors from disk to read (512b each)
 
 ; Certain odd BIOSes actually begin execution at 07c0:0000. To deal with this
 ; discrepancy, the first task the bootloader is to canonicalize CS:EIP to a
@@ -86,7 +86,7 @@ clear_screen:
     pusha                    ; push general-purpose registers onto the stack
 
     mov  dx, 0               ; Position cursor at top-left
-    call os_move_cursor
+    call move_cursor
 
     mov  ah, 6               ; Scroll full-screen
     mov  al, 0               ; Normal white on black
@@ -109,7 +109,7 @@ clear_screen:
 ; RETURN:
 ;   none
 ; -----------------------------------------------------------------------------
-os_move_cursor:
+move_cursor:
     pusha
 
     mov  bh, 0

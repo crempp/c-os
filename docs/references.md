@@ -10,11 +10,13 @@
 * [List of tools included in Watcom](https://github.com/open-watcom/open-watcom-v2/blob/master/projects.txt)
 * [Watcom on OSDev](http://wiki.osdev.org/Watcom)
 
-# Bochs
+## Bochs
 * [Using Bochs internal debugger](http://bochs.sourceforge.net/doc/docbook/user/internal-debugger.html)
 
-## OS Develempent Tutorials and Example Code
+## OS Develempent Books, Tutorials and Example Code
 * [Little OS Book](http://littleosbook.github.io/)
+* [How to Make a Computer Operating System](https://samypesse.gitbooks.io/how-to-create-an-operating-system/content/)
+* [Linux Inside](https://0xax.gitbooks.io/linux-insides/content/)
 * [os-tutorial](https://github.com/cfenollosa/os-tutorial)
 * [Writing a Simple Operating System - from Scratch](http://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf)
 * [OSDev](http://wiki.osdev.org/)

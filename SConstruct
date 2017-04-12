@@ -35,7 +35,7 @@ lnkbld = Builder(action ='$LINK @linkerscript.lnk')
 
 env_kernel = Environment(
     CC        = '%s/bwcc' % OWBINDIR,
-    CCFLAGS   = '-0 -zl -s -od -zfp',
+    CCFLAGS   = '-0 -zl -s -od -zfp -zgp -wx -wo -ms',
     ASFLAGS   = '-f obj',
     LINK      = '%s/bwlink' % OWBINDIR,
     tools     = ['default', 'nasm'],

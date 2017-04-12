@@ -31,10 +31,11 @@ $ ~/opt/bochs/bin/bochs -f bochsrc.txt -q
 1. Disk read retries in bootloader
 2. Get ISO building working again
 3. More SCons commands like building ISO or floppy
+4. Fix SCons dependencies so I don't have clean all the time
 
 ## Docs
 * [Development Log](docs/devlog.md)
 * [Installing Bochs from Source](docs/bochs.md)
 * [Setting up the Watcom Toolchain on Mac](docs/watcom.md)
 * [Setup for C-OS Development](docs/setup.md)
-* [References]
+* [References](docs/references.md)
