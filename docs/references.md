@@ -5,8 +5,11 @@
 * [OpenWatcom on Github](https://github.com/open-watcom/open-watcom-v2)
 * [wcc command line options](http://users.pja.edu.pl/~jms/qnx/help/watcom/compiler-tools/cpopts.html)
 * [wlink command line options](http://users.pja.edu.pl/~jms/qnx/help/watcom/compiler-tools/wlink.html)
-* [wcc Manual](ftp://ftp.openwatcom.org/manuals/current/cguide.pdf)
-* [wlink Manual](http://froebe.net/blog/wp-content/uploads/2014/04/Open-Watcom-1.8-Linker-Users-Guide-Open-Watcom.pdf)
+* [Open Watcom C/C++ User’s Guide](http://froebe.net/blog/wp-content/uploads/2014/04/Open-Watcom-1.8-C_C__-Users-Guide-Open-Watcom.pdf)
+* [Open Watcom C Language Reference](http://froebe.net/blog/wp-content/uploads/2014/04/Open-Watcom-1.8-C-Language-Reference-Open-Watcom.pdf)
+* [Watcom C/C++ Programmer’s Guide](http://froebe.net/blog/wp-content/uploads/2014/04/Open-Watcom-1.8-C_C__-Programmers-Guide-Open-Watcom.pdf)
+* [Open Watcom C/C++ Tools User’s Guide](http://froebe.net/blog/wp-content/uploads/2014/04/Open-Watcom-1.8-C_C__-Tools-Users-Guide-Open-Watcom.pdf)
+* [Open Watcom Linker User’s Guide](http://froebe.net/blog/wp-content/uploads/2014/04/Open-Watcom-1.8-Linker-Users-Guide-Open-Watcom.pdf)
 * [List of tools included in Watcom](https://github.com/open-watcom/open-watcom-v2/blob/master/projects.txt)
 * [Watcom on OSDev](http://wiki.osdev.org/Watcom)
 

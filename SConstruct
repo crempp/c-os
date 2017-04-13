@@ -6,13 +6,14 @@ OWSRCDIR     = '%s/bld' % OWROOT
 
 BUILD_BASE   = 'build'
 SRC_BASE     = 'src'
-SRC_BOOT     = '%s/boot'   % SRC_BASE
-SRC_KERN     = '%s/kernel' % SRC_BASE
-BUILD_BOOT   = '%s/boot'   % BUILD_BASE
-BUILD_KERN   = '%s/kernel' % BUILD_BASE
+SRC_BOOT     = '%s/boot'    % SRC_BASE
+SRC_KERNEL   = '%s/kernel'  % SRC_BASE
+SRC_DRIVER   = '%s/drivers' % SRC_BASE
+BUILD_BOOT   = '%s/boot'    % BUILD_BASE
+BUILD_KERN   = '%s/kernel'  % BUILD_BASE
 BOOTSECT_SRC = '%s/bootsect.s'   % SRC_BOOT
 BOOTSECT_BIN = '%s/bootsect.bin' % BUILD_BOOT
-KERN_BIN     = '%s/kernel.bin' % BUILD_KERN
+KERN_BIN     = '%s/kernel.bin'   % BUILD_KERN
 ISO_FILE     = 'c-os.iso'
 FLP_FILE     = 'c-os.flp'
 
@@ -55,13 +56,14 @@ env_boot_asm = Environment(
 env_boot_asm.Object(BOOTSECT_BIN, BOOTSECT_SRC)
 
 # Build the kernel objects
-KERN_SOURCES = env_kernel.Glob('%s/*.[s]' % SRC_KERN)
+KERN_SOURCES = env_kernel.Glob('%s/*.[s]' % SRC_KERNEL)
 kernel_s_objs = [
     env_kernel.Object(
         '%s/%s.o' % (BUILD_KERN, os.path.splitext(os.path.split(str(src))[1])[0]),
         src
     ) for src in KERN_SOURCES]
-KERN_SOURCES = env_kernel.Glob('%s/*.[c]' % SRC_KERN)
+KERN_SOURCES = env_kernel.Glob('%s/*.[c]' % SRC_KERNEL) + \
+               env_kernel.Glob('%s/*.[c]' % SRC_DRIVER)
 kernel_c_objs = [
     env_kernel.Wcc(
         '%s/%s.o' % (BUILD_KERN, os.path.splitext(os.path.split(str(src))[1])[0]),

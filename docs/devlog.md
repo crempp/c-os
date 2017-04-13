@@ -41,3 +41,23 @@ Kernel is booting properly in real mode and passing strings to a function define
 Today I learned:
 * Had to add `segment _TEXT public align=1 class=CODE` to kernel-entry.s to get the entry code to be located at the beginning.
 * The Watcom linker was putting the data segement in a different memory segement and then referencing with the DS register. I was not setting this register correctly at boot because I didn't know what the linker would do. To solve this I manually set the linker to put the data segement in memory segment 0x0200 and increased the number of sectors being loaded from disk. This get me by for a while but it'd be nice to setup the linker configs to just handle this.
+
+### April 11th, 2017
+Solved the issue with refrencing data values by using the following linker ordering:
+```
+order
+    clname CODE
+        segaddr=0x0100
+        segment _TEXT
+    clname DATA
+        segment CONST  segaddr=0x0200 offset=0x0100
+        segment CONST2 segaddr=0x0200 offset=0x0200
+        segment _DATA  segaddr=0x0200 offset=0x0300
+```
+
+This is unfortunate because it introduced a bunch of null space in the binary caused by the offsets in the DATA class but I can not currently find a way around this.
+
+Also:
+* fleshed out some of the video functionality and fixed a bug in the `v_printhex` function.
+* added a ports driver (nothing to test on yet) and in the process learned how to inline assembly in Watcom.
+* reorganized project by adding a drivers directory
