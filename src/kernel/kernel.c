@@ -11,9 +11,7 @@ int do_a_thing(int foo) {
 }
 
 void _cstart() {
-//     test_video();
-
-
+     test_video();
 }
 
 void test_video() {

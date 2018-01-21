@@ -56,7 +56,8 @@ env_boot_asm = Environment(
 env_boot_asm.Object(BOOTSECT_BIN, BOOTSECT_SRC)
 
 # Build the kernel objects
-KERN_SOURCES = env_kernel.Glob('%s/*.[s]' % SRC_KERNEL)
+KERN_SOURCES = env_kernel.Glob('%s/*.[s]' % SRC_KERNEL) + \
+               env_kernel.Glob('%s/*.[s]' % SRC_DRIVER)
 kernel_s_objs = [
     env_kernel.Object(
         '%s/%s.o' % (BUILD_KERN, os.path.splitext(os.path.split(str(src))[1])[0]),
