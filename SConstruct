@@ -37,7 +37,7 @@ lnkbld = Builder(action ='$LINK @linkerscript.lnk')
 env_kernel = Environment(
     CC        = '%s/bwcc' % OWBINDIR,
     CCFLAGS   = '-0 -zl -s -od -zfp -zgp -wx -wo -ms',
-    ASFLAGS   = '-f obj',
+    ASFLAGS   = '-f obj -i./src/lib/',
     LINK      = '%s/bwlink' % OWBINDIR,
     tools     = ['default', 'nasm'],
     BUILDERS  = {
@@ -48,7 +48,7 @@ env_kernel = Environment(
 )
 
 env_boot_asm = Environment(
-    ASFLAGS = '-f bin',
+    ASFLAGS = '-f bin -i./src/lib/',
     tools   =['default', 'nasm']
 )
 

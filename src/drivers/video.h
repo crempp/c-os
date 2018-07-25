@@ -1,14 +1,43 @@
 #ifndef INCLUDE_VIDEO_H
 #define INCLUDE_VIDEO_H
 
-void v_clrscr();
+/**
+ *
+ * @return
+ */
+char b_get_mode();
 
-void v_mvcurs(char row, char col);
 
-void v_print(char *message);
+/**
+ * Clear the screen
+ */
+void b_clrscr();
 
-void v_printhex(unsigned int num);
+/**
+ * Move the cursor to a row, column on the screen
+ *
+ * @param row
+ * @param col
+ */
+void b_mvcurs(char row, char col);
 
-void v_printnl();
+/**
+ * Print a message to the screen at the current cursor location
+ *
+ * @param message
+ */
+void b_print(char *message);
+
+/**
+ * Print a number in hexadecimal form at the current cursor location
+ *
+ * @param num
+ */
+void b_printhex(unsigned int num);
+
+/**
+ * Print a newline at the current cursor location
+ */
+void b_printnl();
 
 #endif /* INCLUDE_VIDEO_H */

@@ -1,37 +1,34 @@
 #include "../drivers/video.h"
 #include "../drivers/ports.h"
 
+#define OS_IDENT "c-os";
+#define VERSION "0.1";
+
 // Prototypes
-void test_video();
-int do_a_thing(int foo);
-
-
-int do_a_thing(int foo) {
-    return foo * 7;
-}
+void init_screen();
 
 void _cstart() {
-     test_video();
+    init_screen();
 }
 
-void test_video() {
-    int a = 1;
-    int b = a + 1;
-    char *message = "Hello, this is the kernel\0";
+void init_screen() {
+//    int pos = 80;
+//    char mode;
 
-    do_a_thing(b);
+    // char *message = "c-os version 0.1\0";
 
-    v_print("This text should not display");
+    b_clrscr();
+    b_mvcurs(0, 0); // row, col
+    // b_print(message);
+    b_print("c-os version 0.1\0");
+    b_printnl();
 
-    v_clrscr();
-
-    v_mvcurs(15, 12); // row, col
-
-    v_print(message);
-
-    v_printnl();
-
-    v_printhex(0xBABE);
+//    mode = v_get_mode();
+//    v_print("Video mode - ");
+//    v_printhex(mode);
+//    v_printnl();
+//    v_print("|234567890|234567890|234567890|234567890");
+//    v_printnl();
 
     /**
      * Video TODO
@@ -45,6 +42,4 @@ void test_video() {
      * - Scroll down
      * -
      */
-
-
 }

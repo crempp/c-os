@@ -1,26 +1,28 @@
 name build/kernel/kernel.bin      # name of resulting binary
 
-output raw                        # type of binary (ELF, PE, MZ, PharLap, ...)
-    offset=0x1000                 #
+output raw                        # type of binary
+    offset=0x0500                 # specifies the linear base address of the
+                                  # raw output image.
 
-file build/kernel/kernel-entry.o  # objects to link - this one has to be first
+# objects to link
+file build/kernel/kernel-entry.o  # this one has to be first
 file build/kernel/kernel.o
-# file build/kernel/ports.o
 file build/kernel/video.o
-# add more obj files here
+# file build/kernel/ports.o
+# ... add more obj files here
 
-order                             # in which order should segments be put into binary
+order                             # order segments be put into binary
     clname CODE
-        segaddr=0x0100
+        segaddr=0x0050 offset=0x0000
         segment _TEXT
     clname DATA
-        segment CONST  segaddr=0x0200 offset=0x0100
-        segment CONST2 segaddr=0x0200 offset=0x0200
-        segment _DATA  segaddr=0x0200 offset=0x0300
+        segment CONST  segaddr=0x0050 offset=0x72FF
+        #segment CONST2 segaddr=0x0050 offset=0x0200
+        segment _DATA  segaddr=0x0050 offset=0x74FF
 
 option NOCASEEXACT
 option map
 option NODEFAULTLIBS, START=_cstart_
 option verbose
 
-disable 1014                      # Silence `Warning! W1014: stack segment not found`
+disable 1014                      # `Warning! W1014: stack segment not found`

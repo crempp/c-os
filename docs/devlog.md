@@ -1,46 +1,36 @@
 # Development Log
 ----
 
-### March 23rd, 2017
-Built a working example straight out of [Little OS Book](http://littleosbook.github.io/).
+### July 13th - 24th, 2018
+These two weeks were spent getting the OS to boot in pcjs which is the only accurate 8088 emulator I could get working on my Mac and with the binary I was producing.
 
-Today I learned:
-* I don't understand Make
-* I don't understand linking
-* Developing on straight MacOS requires a cross-compiled gcc, the bundled gcc in X-Code won't work
-* The bochs available through brew has no display libraries :(. I have to install from source.
+Some work went into getting pcjs working with the floppy boot disk by padding up to 160k and running the diskdump tool. See here for supported disk sizes (files must be this size) [https://github.com/jeffpar/pcjs/blob/master/modules/shared/lib/diskapi.js#L155-L177](https://github.com/jeffpar/pcjs/blob/master/modules/shared/lib/diskapi.js#L155-L177)
 
-### March 24th, 2017
-I decided I wanted to write my own bootloader so threw out Grub and rolled up my sleaves.
+I added pcjs directly to this project in a pcjs directory for the moment for simplified testing.
 
-### March 25th, 2017
-Setup protected mode and successfully jumped from bootloader to Kernel entry code.
+Now that I'm testing in a true 8088 XT environment I found some issues.
+* pusha/popa doesn't exist until the 80186 ([see here](https://www.pagetable.com/?p=8))
+* on the XT and earlier the BIOS only supports Int 13h functions 0 - 5.
+This means that you can't get the disk params (function 08h). Also, there's
+odd Int 13h behavior that's difficult to find documentation on like
+* Int 13h function 2 doesn't return the sectors read (BIOS bug?). I decided to skip that check.
+* The data segment produced by the linker for the kernel data was messed up. I actually forget what the exact problem was but it was a combination of the segment registers and the linker script settings. It's sorted now.
 
-### March 26th, 2017
-Made a fateful decision today. I will not enter protected mode and I will not create a 32/64 bit OS. I would like to run this OS with the [emulator](https://github.com/crempp/js86emu) I'm writing which uses an 8088 CPU and thus can not do fancy shit.
+I broke out the BIOS video functions to a shared assembly file to reduce code duplication. I also wrote a temporary script package.sh to build the pcjs disk image until I can wrap it into Scons.
 
-Building a 16-bit OS seems harder than I thought it would be. There are not many tools still available. I chose to use OpenWatcom as my compiler/linker. I hope it works.
+### July 8th, 2018
+I wondered if I should rewrite the video driver to not use bios interrupts since
+I kept seeing code useing I/O and DMA. I think that's only because in protected
+mode you don't have the BIOS available. I'll continue using the BIOS since it's
+so much easier.
 
-### March 28th, 2017
-Make is terrible, like really terrible. Let's try [SCons](http://scons.org/) because I like Python. 
+While messing with video modes I found that bochs doesn't support MDA which is
+a common video card on old systems. I determined I need a better emulator for
+old systems. In my investigation I found that pcem and 86box were the two leaders.
+I couldn't get pcem to compile (I was close). I was able to run pcem via wine
+but not 86box. However I couldn't get disks to boot on an XT.
 
-### April 2nd, 2017
-Finally got Watcom compiling and linking but the OS is not functioning.
-
-Today I learned:
-* When calling **to** or **from** assembly the Watcom linker expects the functions to be named with a trailing underscore (_).
-* Adding `START=main_` to linker script solves `Warning! W1023: no starting address found, using 0100:0000`
-* just try linking emu87, math87l, clibl. I think they may actually be needed
-* To get rid of `Error! E2028: __STK is an undefined reference` use the `-s` parameter
-* To get rid of `Error! E2028: _big_code_ is an undefined reference` use the `-zl` parameter
-* To get rid of `Error! E2028: main_ is an undefined reference` you have to name the kernel entry function `_cstart` and the assembly refference `_cstart_`
-
-### April 10th, 2017
-Kernel is booting properly in real mode and passing strings to a function defined in assembly.
-
-Today I learned:
-* Had to add `segment _TEXT public align=1 class=CODE` to kernel-entry.s to get the entry code to be located at the beginning.
-* The Watcom linker was putting the data segement in a different memory segement and then referencing with the DS register. I was not setting this register correctly at boot because I didn't know what the linker would do. To solve this I manually set the linker to put the data segement in memory segment 0x0200 and increased the number of sectors being loaded from disk. This get me by for a while but it'd be nice to setup the linker configs to just handle this.
+I settled on using a Javascript emulator called [pcjs](https://www.pcjs.org/).
 
 ### April 11th, 2017
 Solved the issue with refrencing data values by using the following linker ordering:
@@ -61,3 +51,44 @@ Also:
 * fleshed out some of the video functionality and fixed a bug in the `v_printhex` function.
 * added a ports driver (nothing to test on yet) and in the process learned how to inline assembly in Watcom.
 * reorganized project by adding a drivers directory
+
+### April 10th, 2017
+Kernel is booting properly in real mode and passing strings to a function defined in assembly.
+
+Today I learned:
+* Had to add `segment _TEXT public align=1 class=CODE` to kernel-entry.s to get the entry code to be located at the beginning.
+* The Watcom linker was putting the data segement in a different memory segement and then referencing with the DS register. I was not setting this register correctly at boot because I didn't know what the linker would do. To solve this I manually set the linker to put the data segement in memory segment 0x0200 and increased the number of sectors being loaded from disk. This get me by for a while but it'd be nice to setup the linker configs to just handle this.
+
+### April 2nd, 2017
+Finally got Watcom compiling and linking but the OS is not functioning.
+
+Today I learned:
+* When calling **to** or **from** assembly the Watcom linker expects the functions to be named with a trailing underscore (_).
+* Adding `START=main_` to linker script solves `Warning! W1023: no starting address found, using 0100:0000`
+* just try linking emu87, math87l, clibl. I think they may actually be needed
+* To get rid of `Error! E2028: __STK is an undefined reference` use the `-s` parameter
+* To get rid of `Error! E2028: _big_code_ is an undefined reference` use the `-zl` parameter
+* To get rid of `Error! E2028: main_ is an undefined reference` you have to name the kernel entry function `_cstart` and the assembly refference `_cstart_`
+
+### March 28th, 2017
+Make is terrible, like really terrible. Let's try [SCons](http://scons.org/) because I like Python.
+
+### March 26th, 2017
+Made a fateful decision today. I will not enter protected mode and I will not create a 32/64 bit OS. I would like to run this OS with the [emulator](https://github.com/crempp/js86emu) I'm writing which uses an 8088 CPU and thus can not do fancy shit.
+
+Building a 16-bit OS seems harder than I thought it would be. There are not many tools still available. I chose to use OpenWatcom as my compiler/linker. I hope it works.
+
+### March 25th, 2017
+Setup protected mode and successfully jumped from bootloader to Kernel entry code.
+
+### March 24th, 2017
+I decided I wanted to write my own bootloader so threw out Grub and rolled up my sleaves.
+
+### March 23rd, 2017
+Built a working example straight out of [Little OS Book](http://littleosbook.github.io/).
+
+Today I learned:
+* I don't understand Make
+* I don't understand linking
+* Developing on straight MacOS requires a cross-compiled gcc, the bundled gcc in X-Code won't work
+* The bochs available through brew has no display libraries :(. I have to install from source.
