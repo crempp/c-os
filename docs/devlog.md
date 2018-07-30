@@ -1,6 +1,9 @@
 # Development Log
 ----
-### July 25th - 29th, 2018
+### July 29th, 2018
+Finally found [example](https://forum.osdev.org/viewtopic.php?f=1&t=24041) code that loads more than one cylinder from a disk. This allowed me to finally load the entire kernel. The kernel isn't working yet but it's loading.
+
+### July 25th - 28th, 2018
 Tried in vain to get multi sector disk loading to work. No luck. I have decided to start over but in the meantime I took a break by writing routines to print the available memory. This was more difficult than I thought but finally got it to work.
 
 ### July 13th - 24th, 2018
