@@ -16,9 +16,9 @@ order                             # order segments be put into binary
         segaddr=0x0050 offset=0x0000
         segment _TEXT
     clname DATA
-        segment CONST  segaddr=0x0050 offset=0x72FF
+        segment CONST   segaddr=0x0050 offset=0x72FF
         #segment CONST2 segaddr=0x0050 offset=0x0200
-        segment _DATA  segaddr=0x0050 offset=0x74FF
+        segment _DATA   segaddr=0x0050 offset=0x74FF
 
 option NOCASEEXACT
 option map

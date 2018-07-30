@@ -1,5 +1,7 @@
 # Development Log
 ----
+### July 25th - 29th, 2018
+Tried in vain to get multi sector disk loading to work. No luck. I have decided to start over but in the meantime I took a break by writing routines to print the available memory. This was more difficult than I thought but finally got it to work.
 
 ### July 13th - 24th, 2018
 These two weeks were spent getting the OS to boot in pcjs which is the only accurate 8088 emulator I could get working on my Mac and with the binary I was producing.
@@ -17,6 +19,8 @@ odd Int 13h behavior that's difficult to find documentation on like
 * The data segment produced by the linker for the kernel data was messed up. I actually forget what the exact problem was but it was a combination of the segment registers and the linker script settings. It's sorted now.
 
 I broke out the BIOS video functions to a shared assembly file to reduce code duplication. I also wrote a temporary script package.sh to build the pcjs disk image until I can wrap it into Scons.
+
+I still need to update the disk loading code to copy more than one track. That's next...
 
 ### July 8th, 2018
 I wondered if I should rewrite the video driver to not use bios interrupts since
