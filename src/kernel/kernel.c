@@ -12,9 +12,8 @@ void _cstart() {
 }
 
 void init_screen() {
-//    int pos = 80;
-//    char mode;
-
+    // int pos = 80;
+    // char mode;
     // char *message = "c-os version 0.1\0";
 
     b_clrscr();
@@ -23,12 +22,12 @@ void init_screen() {
     b_print("c-os version 0.1\0");
     b_printnl();
 
-//    mode = v_get_mode();
-//    v_print("Video mode - ");
-//    v_printhex(mode);
-//    v_printnl();
-//    v_print("|234567890|234567890|234567890|234567890");
-//    v_printnl();
+   // mode = v_get_mode();
+   // v_print("Video mode - ");
+   // v_printhex(mode);
+   // v_printnl();
+   // v_print("|234567890|234567890|234567890|234567890");
+   // v_printnl();
 
     /**
      * Video TODO

@@ -119,6 +119,7 @@
     height: 34px;
     line-height: 34px;
     background-color: #ffffff;
+    overflow: hidden;
 }
 .pcjs-panel-group {
     color: #ffffff;
@@ -209,8 +210,8 @@
     resize: none;
     color: white;
     font-family: Monaco, "Lucida Console", monospace;
-    font-size: medium;
-    background: rgba(0, 0, 0, .5);
+    font-size: small;
+    background: black;
     opacity: 0;
     line-height: 0;
 }
@@ -230,7 +231,7 @@
 }
 @media screen and (max-width: 800px) {
     .pcjs-textarea {
-        width: 100% !important;
+        width: 96% !important;
     }
     .pcjs-registers {
         width: 100% !important;
@@ -246,7 +247,7 @@
         padding-right: 0 !important;
     }
 }
-@media screen and (min-width: 1200px) {
+@media screen and (min-width: 1024px) {
     .machine-left {
         max-width: 48%;
         float: left;

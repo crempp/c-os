@@ -1,5 +1,18 @@
 # Development Log
 ----
+
+### July 30th, 2018
+After getting the bootloader to load more than one track I was immediately stuck again when the CONST section of the kernel wasn't where I thought it should be in memory.
+
+First I found that the linker offsets for the assembly segments were wrong. Fixed those.
+
+Next I realized that the segment registers needed to be setup for the kernel once we get to the entry point.
+
+Things still weren't working. I modified the code to print the address the bootloader was copying sectors to using the print_hex function. Within that function the ROR instruction would execute and then the IP register zeroed out. This was quite odd so I assumed it was a bug in pcjs. I upgraded pcjs to no avail. After debugging pcjs itself for a while I finally stumbled on some obscure information that many instructions on the 8088 don't support all addressing modes. For example ROR and SHR can't use immediate values or memory locations (these are functionally the same) but must use the CL register.
+Using the `cpu 8086` directive in nasm helps point these out. After updating the code the address printing worked but along the way I found the actual bugs that led me to even try hex printing. In a few areas I was overwriting registers which messed up loading addresses. Fixed those and now the kernel CONST segment is in the right spot.
+
+The kernel is running and I see the kernel message but the screen is acting wacky.
+
 ### July 29th, 2018
 Finally found [example](https://forum.osdev.org/viewtopic.php?f=1&t=24041) code that loads more than one cylinder from a disk. This allowed me to finally load the entire kernel. The kernel isn't working yet but it's loading.
 

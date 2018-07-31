@@ -35,7 +35,10 @@ $ ~/opt/bochs/bin/bochs -f bochsrc.txt -q
 
 ## Docs
 * [Development Log](docs/devlog.md)
+* [General Memory Map](docs/memory_map.md)
+* [C-OS Memory Map](docs/cos_memory_map.md)
 * [Installing Bochs from Source](docs/bochs.md)
 * [Setting up the Watcom Toolchain on Mac](docs/watcom.md)
 * [Setup for C-OS Development](docs/setup.md)
+* [Disk Geometries](docs/disk_geometries.md)
 * [References](docs/references.md)

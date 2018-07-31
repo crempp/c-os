@@ -10,8 +10,8 @@
 ; Notes:
 ;   * Since this OS is for PC/XT systems we can't use Disk functions > 05h as
 ;     those functions are only available for ATs. This makes things difficult.
-
-[org 0x7c00]                    ; bootsector loads at offset 0x7c00
+cpu 8086
+org 0x7c00                     ; bootsector loads at offset 0x7c00
 
 ; -----------------------------------------------------------------------------
 ; Bootloader constants
@@ -108,10 +108,12 @@ kernel_load:
     jc   read
     mov  byte [disk_retry], 0   ; If successful read, reset the retry count
 
+    push bx
     mov  ah, 0Eh                ; Print a dot after each sector is read
     mov  al, '.'
     xor  bx, bx                 ; Set page 0 (bh), color 0 (bl)
     int  10h
+    pop  bx
 
     add  bx, 512                ; Increase destination offset with each new
                                 ; Sector read
@@ -270,16 +272,18 @@ disk_head         db 0          ; The current head disk load routine is on
 disk_cyl          db 0          ; The current cylinder disk load routine is on
 disk_retry        db 0          ; The current number of disk load retries
 disk_sect_rdcount db KERNEL_SECTORS ; Number of sectors left to read when loading
-disk_drive        db 0x00
+disk_drive        db 0
+hex_out           db `0x0000\n\r`, 0
+;newline           db `\n\r`, 0
 msg_boot:
-    ;db `\n\r`
-    db `C-OS-86 0.1 07-15-2018\n\r`
+    db `C-OS v0.1 07-15-2018\n\r`
     db `Copyright (C) 2018, Chad Rempp\n\r`
     db `\n\r`, 0
-msg_load_kernel   db `Loading the kernel...\n\r`, 0
+msg_load_kernel   db `Loading the kernel\n\r`, 0
 msg_memory        db `KB base memory\n\r\n\r`, 0
 msg_disk_error    db `Disk read error\n\r\n\r`, 0
 msg_sectors_error db `Incorrect number of sectors read\n\r\n\r`, 0
+
 
 ; -----------------------------------------------------------------------------
 ; Padding and magic number

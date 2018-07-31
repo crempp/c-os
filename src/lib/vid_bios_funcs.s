@@ -1,3 +1,4 @@
+cpu 8086
 bits 16
 
 ; Basic Constants
@@ -138,49 +139,49 @@ b_printnl:
 ;   none
 ; -----------------------------------------------------------------------------
 b_print_hex:
-    push ax
+  push ax
+  push cx
+  push dx
+  push bx
+
+  mov  cx, 0                    ; our index variable
+  hex_loop:
+    cmp  cx, 4                  ; loop 4 times
+    je   end
+
+    ; 1. convert last char of 'dx' to ascii
+    mov  ax, dx                 ; we will use 'ax' as our working register
+    and  ax, 0x000f             ; 0x1234 -> 0x0004 by masking first three to zeros
+    add  al, 0x30               ; add 0x30 to N to convert it to ASCII "N"
+    cmp  al, 0x39               ; if > 9, add extra 8 to represent 'A' to 'F'
+    jle  step2
+    add  al, 7                  ; 'A' is ASCII 65 instead of 58, so 65-58=7
+
+  step2:
+    ; 2. get the correct position of the string to place our ASCII char
+    ; bx <- base address + string length - index of char
+    mov  bx, hex_out + 5        ; base + length
+    sub  bx, cx                 ; our index variable
+    mov  [bx], al               ; copy the ASCII char on 'al' to the position
+                                ; pointed by 'bx'
     push cx
-    push dx
-    push bx
+    mov  cl, 4
+    ror  dx, cl                 ; 0x1234 -> 0x4123 -> 0x3412 -> 0x2341 -> 0x1234
+    pop  cx
 
-    mov  cx, 0               ; our index variable
+    add  cx, 1                  ; increment index
+    jmp  hex_loop               ; and loop
 
-    hex_loop:
-        cmp  cx, 4           ; loop 4 times
-        je   end
+  end:
+    mov  bx, hex_out            ; prepare the parameter
+    call b_print                ; and call the print function
 
-        ; 1. convert last char of 'dx' to ascii
-        mov  ax, dx          ; we will use 'ax' as our working register
-        and  ax, 0x000f      ; 0x1234 -> 0x0004 by masking first three to zeros
-        add  al, 0x30        ; add 0x30 to N to convert it to ASCII "N"
-        cmp  al, 0x39        ; if > 9, add extra 8 to represent 'A' to 'F'
-        jle  step2
-        add  al, 7           ; 'A' is ASCII 65 instead of 58, so 65-58=7
-
-    step2:
-        ; 2. get the correct position of the string to place our ASCII char
-        ; bx <- base address + string length - index of char
-        mov  bx, HEX_OUT + 5 ; base + length
-        sub  bx, cx          ; our index variable
-        mov  [bx], al        ; copy the ASCII char on 'al' to the position
-                             ; pointed by 'bx'
-        ror  dx, 4           ; 0x1234 -> 0x4123 -> 0x3412 -> 0x2341 -> 0x1234
-
-        add  cx, 1           ; increment index
-        jmp  hex_loop        ; and loop
-
-    end:
-
-        ; mov  bx, HEX_OUT     ; prepare the parameter
-        mov  ax, HEX_OUT     ; prepare the parameter
-        call b_print         ; and call the print function
-
-        pop bx
-        pop dx
-        pop cx
-        pop ax
-        ret
+  pop bx
+  pop dx
+  pop cx
+  pop ax
+  ret
 
 ;segment _DATA public align=1 use16 class=DATA
-HEX_OUT: db '0x0000', EOL
+hex_out: db '0x0000', EOL
 ;HEX_OUT: db '0x5544', EOL
