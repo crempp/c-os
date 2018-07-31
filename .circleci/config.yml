@@ -1,0 +1,121 @@
+# Requires variables
+#   * DO_TOKEN
+#	* DOCKER_USER
+#	* DOCKER_PASS
+#	* DEPLOY_NODE
+
+defaults: &DEFAULT
+  working_directory: ~/app
+  docker:
+    - image: docker:18.06.0-ce-git
+
+version: 2
+jobs:
+  build:
+    <<: *DEFAULT
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Install dependencies
+          command: |
+            echo "No dependencies"
+      - restore_cache:
+          keys:
+            - v1-{{ .Branch }}
+          paths:
+            - /caches/app-c-os.tar
+            - /caches/app-c-os-build-ci.tar
+      - run:
+          name: Load Docker image layer caches
+          command: |
+            set +o pipefail
+            docker load -i /caches/app-c-os.tar | true
+            docker load -i /caches/app-c-os-build-ci.tar | true
+      - run:
+          name: Build the Builder
+          command: |
+            docker build --cache-from=c-os-build-ci -t c-os-build-ci -f Dockerfile.ci.build .
+      - run:
+          name: Build the OS
+          command: |
+            docker run -itd --name c-os-ci c-os-build-ci sh
+            docker exec c-os-ci scons
+            docker cp c-os-ci:/app/build .
+            docker cp c-os-ci:/app/pcjs/c-os.json ./pcjs/
+            docker stop c-os-ci
+            docker rm c-os-ci
+      - run:
+          name: Build application Docker image
+          command: |
+            docker build --cache-from=lapinlabs/c-os -t lapinlabs/c-os .
+      - run:
+          name: Save Docker image layer cache
+          command: |
+            mkdir -p /caches
+            docker save -o /caches/app-c-os.tar lapinlabs/c-os:latest
+            docker save -o /caches/app-c-os-build-ci.tar c-os-build-ci:latest
+      - save_cache:
+          key: v1-{{ .Branch }}-{{ epoch }}
+          paths:
+            - /caches/app-c-os.tar
+            - /caches/app-c-os-build-ci.tar
+      # Note: we don't push here, we wait for tests to pass and push in the deploy job
+
+  test:
+    <<: *DEFAULT
+    steps:
+      - run:
+          name: Do Test
+          command: echo no tests
+
+  deploy:
+    <<: *DEFAULT
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          keys:
+            - v1-{{ .Branch }}
+          paths:
+            - /caches/app-c-os.tar
+      - run:
+          name: Load Docker image layer cache
+          command: |
+            set +o pipefail
+            docker load -i /caches/app-c-os.tar | true
+      - run:
+          name: Push application Docker image
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker tag lapinlabs/c-os lapinlabs/c-os:${CIRCLE_BRANCH//\//-}-${CIRCLE_BUILD_NUM}
+            docker push lapinlabs/c-os:${CIRCLE_BRANCH//\//-}-${CIRCLE_BUILD_NUM}
+            docker push lapinlabs/c-os:latest
+      - run:
+          name: Remotely deploy to droplet
+          command: |
+            apk add --update curl curl-dev jq
+            export IP=`curl -s -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $DO_TOKEN" "https://api.digitalocean.com/v2/droplets/" | jq ".droplets[] | select(.name == \"$DEPLOY_NODE\") | .networks.v4[0].ip_address"`
+            export IP=`echo $IP | sed -e 's/^"//' -e 's/"$//'`
+            echo "Deploying to $DEPLOY_NODE [$IP]"
+            ssh -o StrictHostKeyChecking=no root@${IP} "service container-c-os redeploy"
+
+workflows:
+  version: 2
+  build-test-and-deploy:
+    jobs:
+      - test:
+          context: deployment
+      - build:
+          context: deployment
+      - deploy:
+          context: deployment
+          requires:
+            - build
+            - test
+          filters:
+            branches:
+              only:
+                - ci
+                - master

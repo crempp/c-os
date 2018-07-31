@@ -1,0 +1,34 @@
+# To use
+# docker build -t c-os-build -f Dockerfile.local.build .
+# docker run --rm -v `pwd`:/app c-os-build
+#
+# To debug
+# docker run --rm -it -v `pwd`:/app c-os-build /bin/sh
+FROM lapinlabs/watcom
+
+RUN apk add --no-cache --update \
+      scons \
+      nasm \
+      nodejs \
+    && rm -rf /var/cache/apk/*
+
+# Clone the PCJS project for json disk builder
+RUN apk add --no-cache --update --virtual .build-deps \
+      git \
+      nodejs-npm \
+      g++ \
+      make \
+      linux-headers \
+    && mkdir /usr/local/opt \
+    && git clone https://github.com/jeffpar/pcjs.git /usr/local/opt/pcjs \
+    && cd /usr/local/opt/pcjs \
+    && npm install \
+    && apk del .build-deps \
+    && rm -rf /var/cache/apk/*
+
+ENV PATH /root/opt/bin:$PATH
+
+WORKDIR /app
+
+# Launch build process
+CMD ["scons"]
