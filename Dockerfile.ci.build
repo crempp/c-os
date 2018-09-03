@@ -1,0 +1,42 @@
+# We need a special Docker file for CircleCI since mounting folders is not
+# possible.
+# https://circleci.com/docs/2.0/building-docker-images/#mounting-folders
+# For this reason we will need to use the COPY instruction in this file and the
+# cp (copy) command.
+#
+# To use
+# docker build -t c-os-build -f Dockerfile.ci.build .
+# docker run --rm -v `pwd`:/app c-os-build
+#
+# To debug
+# docker run --rm -it -v `pwd`:/app c-os-build /bin/sh
+FROM lapinlabs/watcom
+
+RUN apk add --no-cache --update \
+      scons \
+      nasm \
+      nodejs \
+    && rm -rf /var/cache/apk/*
+
+# Clone the PCJS project for json disk builder
+RUN apk add --no-cache --update --virtual .build-deps \
+      git \
+      nodejs-npm \
+      g++ \
+      make \
+      linux-headers \
+    && mkdir /usr/local/opt \
+    && git clone https://github.com/jeffpar/pcjs.git /usr/local/opt/pcjs \
+    && cd /usr/local/opt/pcjs \
+    && npm install \
+    && apk del .build-deps \
+    && rm -rf /var/cache/apk/*
+
+ENV PATH /root/opt/bin:$PATH
+
+COPY . /app
+
+WORKDIR /app
+
+# Launch build process
+CMD ["scons"]

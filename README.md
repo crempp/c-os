@@ -1,10 +1,21 @@
 # c-os
 The Chad Operating System.
 
+<p align="center">
+  <img src="./docs/images/c-os-bootloader.jpg" alt="c-os bootloader"
+       width="85%" height="85%">
+</p>
+
 ## Inspiration
 I've been meaning to read the mini-book [_The little book about OS development_](http://littleosbook.github.io/book.pdf) for a while. I finally got around to it and it made OS development seem simple enough for even me to tackle. The result is this toy OS.
 
-## Requirements
+## Requirements (Updated)
+Setting up the Watcom build environment is no easy task, especially on Mac. For this reason I've created a [Watcom Docker build image](https://hub.docker.com/r/lapinlabs/watcom/)
+
+The only requirement for building in this way is
+* Docker
+
+## Requirements (Old)
 These requirements are targeted at Mac. For Windows or Linux the requirements are mostly the same but details will vary.
 
 * X-Code (Mac only, this will bootstrap the building of the cross-compiled gcc)
@@ -16,22 +27,44 @@ These requirements are targeted at Mac. For Windows or Linux the requirements ar
 
 Detailed instructions on environment setup are in the [setup docs](docs/setup.md)
 
-## Build
+## Build (Old)
 We use SCons for building because Make is the worst.
 
 * *Build boot and kernel* `scons`
 * *Clean up* `scons -c`
 
+## Build using Docker
+
+Build the c-os image
+```
+$ docker build -t c-os-build -f Dockerfile.build .
+```
+
+Run the build image
+```
+$ docker run --rm -v `pwd`:/app c-os-build
+```
+
 ## Running
-```commandline
+```
 $ ~/opt/bochs/bin/bochs -f bochsrc.txt -q
 ```
 
+## Running using PCJS and Docker
+Build the c-os server image
+```
+$ docker build -t c-os .
+```
+
+Run server
+```
+$ docker run --rm -p 8080:8080 c-os
+```
+
 ## TODO
-1. Disk read retries in bootloader
-2. Get ISO building working again
-3. More SCons commands like building ISO or floppy
-4. Fix SCons dependencies so I don't have clean all the time
+1. Get ISO building working again
+2. More SCons commands like building ISO or floppy
+3. Fix SCons dependencies so I don't have clean all the time
 
 ## Docs
 * [Development Log](docs/devlog.md)

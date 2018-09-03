@@ -8,6 +8,7 @@ CMakeCache.txt
 *.err
 temp
 
+
 # Prerequisites
 *.d
 
@@ -59,3 +60,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# We ignored map files above. Include JS maps.
+!pcjs/*.map

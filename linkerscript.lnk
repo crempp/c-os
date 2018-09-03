@@ -1,8 +1,11 @@
 name build/kernel/kernel.bin      # name of resulting binary
 
 output raw                        # type of binary
-    offset=0x0500                 # specifies the linear base address of the
+    offset=0x0000                 # specifies the linear base address of the
                                   # raw output image.
+# NOTE: I had the offset set to 0x0500 (the base of the kernel) but this
+# caused a weird issue when building in Docker where the binary was 4Gb.
+# Setting it to 0x0000 seems to work now.
 
 # objects to link
 file build/kernel/kernel-entry.o  # this one has to be first
