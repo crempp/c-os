@@ -1,5 +1,12 @@
 # Development Log
 ----
+## September ????, 2018
+Cleaned up the video driver. Not sure if it'll stay how it is but it's a little better now.
+
+I found the bug with v_print_nl - it seems that int 10h does not push/pop and I have to reset the AH/AL/BH/BL parameters each time it's called.
+
+## September 3rd, 2018
+Got the Docker build container, CircleCI and deployment working. That is a story for another day. Now you can see the the OS running at http://c-os.chadrempp.com/
 
 ### July 30th, 2018
 After getting the bootloader to load more than one track I was immediately stuck again when the CONST section of the kernel wasn't where I thought it should be in memory.

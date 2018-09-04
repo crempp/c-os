@@ -1,5 +1,5 @@
 #include "../drivers/video.h"
-#include "../drivers/ports.h"
+#include "../drivers/cpu.h"
 
 #define OS_IDENT "c-os";
 #define VERSION "0.1";
@@ -8,37 +8,20 @@
 void init_screen();
 
 void _cstart() {
-    init_screen();
+  run_kernel();
 }
 
-void init_screen() {
-    // int pos = 80;
-    // char mode;
-    // char *message = "c-os version 0.1\0";
+void run_kernel() {
+  // Intialize screen
+  int mode;
 
-    b_clrscr();
-    b_mvcurs(0, 0); // row, col
-    // b_print(message);
-    b_print("c-os version 0.1\0");
-    b_printnl();
+  mode = v_get_mode();
 
-   // mode = v_get_mode();
-   // v_print("Video mode - ");
-   // v_printhex(mode);
-   // v_printnl();
-   // v_print("|234567890|234567890|234567890|234567890");
-   // v_printnl();
+  v_set_page(0);
+  v_clr_screen();
+  v_print("c-os version 0.2\0");
+  v_print_nl();
+  v_print("> \0");
 
-    /**
-     * Video TODO
-     *
-     *  http://www.ousob.com/ng/asm/ng6f862.php
-     *  http://www.seasip.info/VintagePC/mda.html#memmap
-     *  http://www.minuszerodegrees.net/oa/OA%20-%20IBM%20Monochrome%20Display%20and%20Printer%20Adapter.pdf
-     *
-     * - Change video mode
-     * - Scroll up
-     * - Scroll down
-     * -
-     */
+  suspend();
 }
