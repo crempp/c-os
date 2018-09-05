@@ -273,8 +273,6 @@ disk_cyl          db 0          ; The current cylinder disk load routine is on
 disk_retry        db 0          ; The current number of disk load retries
 disk_sect_rdcount db KERNEL_SECTORS ; Number of sectors left to read when loading
 disk_drive        db 0
-hex_out           db `0x0000\n\r`, 0
-;newline           db `\n\r`, 0
 msg_boot:
     db `C-OS v0.1 07-15-2018\n\r`
     db `Copyright (C) 2018, Chad Rempp\n\r`

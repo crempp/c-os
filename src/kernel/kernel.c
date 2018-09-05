@@ -1,44 +1,41 @@
 #include "../drivers/video.h"
-#include "../drivers/ports.h"
+#include "../drivers/cpu.h"
 
 #define OS_IDENT "c-os";
 #define VERSION "0.1";
 
 // Prototypes
 void init_screen();
+void debug_info();
+void wait();
 
 void _cstart() {
-    init_screen();
+  run_kernel();
 }
 
-void init_screen() {
-    // int pos = 80;
-    // char mode;
-    // char *message = "c-os version 0.1\0";
+void run_kernel() {
+  // Intialize screen
+  v_set_page(0);
+  v_clr_screen();
 
-    b_clrscr();
-    b_mvcurs(0, 0); // row, col
-    // b_print(message);
-    b_print("c-os version 0.1\0");
-    b_printnl();
+  v_print("c-os version 0.1\0");
+  v_print_nl();
+  debug_info();
 
-   // mode = v_get_mode();
-   // v_print("Video mode - ");
-   // v_printhex(mode);
-   // v_printnl();
-   // v_print("|234567890|234567890|234567890|234567890");
-   // v_printnl();
+  v_print("> \0");
 
-    /**
-     * Video TODO
-     *
-     *  http://www.ousob.com/ng/asm/ng6f862.php
-     *  http://www.seasip.info/VintagePC/mda.html#memmap
-     *  http://www.minuszerodegrees.net/oa/OA%20-%20IBM%20Monochrome%20Display%20and%20Printer%20Adapter.pdf
-     *
-     * - Change video mode
-     * - Scroll up
-     * - Scroll down
-     * -
-     */
+  wait();
+}
+
+void debug_info() {
+  int mode;
+  mode = v_get_mode();
+  v_print_nl();
+  v_print("Video Mode: \0");
+  v_print_hex(mode);
+  v_print_nl();
+}
+
+void wait() {
+  while (1) {}
 }

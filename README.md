@@ -1,5 +1,5 @@
 # c-os
-The Chad Operating System.
+The Chad Operating System. [Demo](http://c-os.chadrempp.com/)
 
 <p align="center">
   <img src="./docs/images/c-os-bootloader.jpg" alt="c-os bootloader"

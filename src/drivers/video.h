@@ -5,13 +5,13 @@
  *
  * @return
  */
-char b_get_mode();
+unsigned char v_get_mode();
 
 
 /**
  * Clear the screen
  */
-void b_clrscr();
+void v_clr_scr();
 
 /**
  * Move the cursor to a row, column on the screen
@@ -19,25 +19,35 @@ void b_clrscr();
  * @param row
  * @param col
  */
-void b_mvcurs(char row, char col);
+void v_mv_curs(char row, char col);
 
 /**
  * Print a message to the screen at the current cursor location
  *
  * @param message
  */
-void b_print(char *message);
+void v_print(char *message);
 
 /**
  * Print a number in hexadecimal form at the current cursor location
  *
  * @param num
  */
-void b_printhex(unsigned int num);
+void v_print_hex(unsigned int num);
 
 /**
  * Print a newline at the current cursor location
  */
-void b_printnl();
+void v_print_nl();
+
+/**
+ * Set the BIOS video mode
+ */
+void v_set_mode(unsigned char mode);
+
+/**
+ * Set the BIOS video page
+ */
+void v_set_page(unsigned char page);
 
 #endif /* INCLUDE_VIDEO_H */
