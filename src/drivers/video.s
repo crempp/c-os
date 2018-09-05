@@ -21,6 +21,9 @@
 ;   11: VGA 640*480 16 color
 ;   12: VGA 640*480 16 color
 ;   13: VGA 320*200 256 color*
+;
+; References:
+;   * https://www.seasip.info/VintagePC/mda.html
 
 cpu 8086
 bits 16
@@ -83,7 +86,8 @@ v_clr_screen:
   mov  dl, 79                       ; Right
   int  0x10
 
-  mov  dx, 0                        ; Position cursor at top-left
+  mov  ax, 0                        ; Position cursor at top
+  mov  dx, 0                        ; Position cursor at left
   call v_mv_cursor
 
   pop bp
@@ -117,8 +121,8 @@ v_get_mode:
 ; Moves cursor in text mode using BIOS
 ;
 ; PARAMETERS:
-;   DH - Row
-;   DL - Column
+;   AX - Row
+;   DX - Column
 ; RETURN:
 ;   none
 ; -----------------------------------------------------------------------------
@@ -130,6 +134,10 @@ v_mv_cursor:
   mov  bx, active_page            ; Get the address for the active page value
   mov  dh, [bx]                   ; Retrieve the value
   mov  bh, dh                     ; Set BH to the active page number
+
+  mov  dh, al                     ; Row - move from parameter AX to DH
+                                  ; Column - DL is already passed from param
+
   mov  ah, 0x02
   int  0x10
 
@@ -142,8 +150,11 @@ v_mv_cursor:
 ; -----------------------------------------------------------------------------
 ; Print string currently pointed to by register BX using BIOS
 ;
+; TODO:
+;   * Refactor so I don't need mov  bx, ax
+;
 ; PARAMETERS:
-;   BX - Pointer to string to print
+;   AX - Pointer to string to print
 ; RETURN:
 ;   none
 ; -----------------------------------------------------------------------------
@@ -194,7 +205,7 @@ v_print:
 ; Then, move the ASCII byte to the correct position on the resulting string
 ;
 ; PARAMETERS:
-;   DX - Hex value to print
+;   AX - Hex value to print
 ; RETURN:
 ;   none
 ; -----------------------------------------------------------------------------
@@ -205,6 +216,7 @@ v_print_hex:
   push bx
 
   mov  cx, 0                        ; our index variable
+  mov  dx, ax                       ; DX will be the numerical value
   hex_loop:
     cmp  cx, 4                      ; loop 4 times
     je   end
@@ -233,7 +245,7 @@ v_print_hex:
     jmp  hex_loop                   ; and loop
 
   end:
-    mov  bx, hex_out                ; prepare the parameter
+    mov  ax, hex_out                ; prepare the parameter
     call v_print                    ; and call the print function
 
   pop bx
@@ -257,20 +269,8 @@ v_print_nl:
   push dx
   push bp
 
-  mov  bx, active_page            ; Get the address for the active page value
-  mov  dh, [bx]                   ; Retrieve the value
-  mov  bh, dh                     ; Set BH to the active page number
-  mov  bl, FOREGROUND_COLOR
-  mov  ah, 0x0e
-  mov  al, CR
-  int  0x10
-  mov  bx, active_page            ; Get the address for the active page value
-  mov  dh, [bx]                   ; Retrieve the value
-  mov  bh, dh                     ; Set BH to the active page number
-  mov  bl, FOREGROUND_COLOR
-  mov  ah, 0x0e
-  mov  al, LF
-  int  0x10
+  mov  ax, newline                ; prepare the parameter
+  call v_print                    ; and call the print function
 
   pop  bp
   pop  dx
@@ -323,3 +323,4 @@ v_set_page:
 segment _DATA public align=1 use16 class=DATA
 hex_out:     db '0x0000', EOL
 active_page: db 0x0
+newline:     db CR, LF, EOL
