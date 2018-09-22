@@ -12,7 +12,7 @@ file build/kernel/kernel-entry.o  # this one has to be first
 file build/kernel/kernel.o
 file build/kernel/cpu.o
 file build/kernel/video.o
-# file build/kernel/ports.o
+file build/kernel/keyboard.o
 # ... add more obj files here
 
 order                             # order segments be put into binary
