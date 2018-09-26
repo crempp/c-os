@@ -9,7 +9,7 @@ void _cstart() {
   char c;
   char *kbd_buffer;
 
-  install_keyboard_driver();
+  keyboard_initialize();
 
   // Intialize screen
   v_set_page(0);

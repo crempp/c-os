@@ -2,7 +2,7 @@
 #define INCLUDE_KEYBOARD_H
 
 /** */
-void install_keyboard_driver();
+void keyboard_initialize();
 
 /** */
 char * poll_kbd_buffer();
