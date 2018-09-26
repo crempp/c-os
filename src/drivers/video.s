@@ -1,27 +1,5 @@
 ; Video Driver Functions
 ;
-; VIDEO MODES:
-;   00: text 40*25 16 color (mono)
-;   01: text 40*25 16 color
-;   02: text 80*25 16 color (mono)
-;   03: text 80*25 16 color
-;   04: CGA 320*200 4 color
-;   05: CGA 320*200 4 color (m)
-;   06: CGA 640*200 2 color
-;   07: MDA monochrome text 80*25
-;   08: PCjr
-;   09: PCjr
-;   0A: PCjr
-;   0B: reserved
-;   0C: reserved
-;   0D: EGA 320*200 16 color
-;   0E: EGA 640*200 16 color
-;   0F: EGA 640*350 mono
-;   10: EGA 640*350 16 color
-;   11: VGA 640*480 16 color
-;   12: VGA 640*480 16 color
-;   13: VGA 320*200 256 color*
-;
 ; References:
 ;   * https://www.seasip.info/VintagePC/mda.html
 
@@ -32,25 +10,28 @@ global v_clr_screen_
 %define v_clr_screen v_clr_screen_
 
 global v_get_mode_
-%define v_get_mode   v_get_mode_
+%define v_get_mode v_get_mode_
 
 global v_mv_cursor_
-%define v_mv_cursor  v_mv_cursor_
+%define v_mv_cursor v_mv_cursor_
 
 global v_print_
-%define v_print      v_print_
+%define v_print v_print_
 
 global v_print_hex_
-%define v_print_hex  v_print_hex_
+%define v_print_hex v_print_hex_
 
 global v_print_nl_
-%define v_print_nl   v_print_nl_
+%define v_print_nl v_print_nl_
+
+global v_putch_
+%define v_putch v_putch_
 
 global v_set_mode_
-%define v_set_mode   v_set_mode_
+%define v_set_mode v_set_mode_
 
 global v_set_page_
-%define v_set_page   v_set_page_
+%define v_set_page v_set_page_
 
 ; Basic Constants
 LF  equ 0x0A
@@ -152,6 +133,7 @@ v_mv_cursor:
 ;
 ; TODO:
 ;   * Refactor so I don't need mov  bx, ax
+;   * Use v_putch to save on code
 ;
 ; PARAMETERS:
 ;   AX - Pointer to string to print
@@ -265,17 +247,31 @@ v_print_hex:
 ; -----------------------------------------------------------------------------
 v_print_nl:
   push ax
-  push bx
-  push dx
-  push bp
-
   mov  ax, newline                ; prepare the parameter
   call v_print                    ; and call the print function
+  pop  ax
+  ret
 
-  pop  bp
+
+; -----------------------------------------------------------------------------
+; Print a single character at the cursor location
+;
+; PARAMETERS:
+;   AL - Character to print
+; RETURN:
+;   none
+; -----------------------------------------------------------------------------
+v_putch:
+  push bx
+  push dx
+  mov  bx, active_page              ; Get the address for the active page value
+  mov  dh, [bx]                     ; Retrieve the value
+  mov  bh, dh                       ; Set BH to the active page number
+  mov  bl, FOREGROUND_COLOR
+  mov  ah, 0x0e                     ; Set BIOS Int function to Teletype output
+  int  0x10                         ; Call Int 10h - BIOS video services
   pop  dx
   pop  bx
-  pop  ax
   ret
 
 

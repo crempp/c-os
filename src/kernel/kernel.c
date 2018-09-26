@@ -1,30 +1,33 @@
 #include "../drivers/video.h"
 #include "../drivers/cpu.h"
+#include "../drivers/keyboard.h"
 
-#define OS_IDENT "c-os";
-#define VERSION "0.1";
-
-// Prototypes
-void init_screen();
+// Prototypes;
 void debug_info();
-void wait();
 
 void _cstart() {
-  run_kernel();
-}
+  char c;
+  char *kbd_buffer;
 
-void run_kernel() {
+  install_keyboard_driver();
+
   // Intialize screen
   v_set_page(0);
   v_clr_screen();
 
   v_print("c-os version 0.1\0");
   v_print_nl();
-  debug_info();
+  // debug_info();
 
   v_print("> \0");
 
-  wait();
+  while(1) {
+    // This is not how we should do this
+    c = poll_kbd_buffer();
+    if (c != 0) {
+      v_putch(c);
+    }
+  }
 }
 
 void debug_info() {
@@ -34,8 +37,4 @@ void debug_info() {
   v_print("Video Mode: \0");
   v_print_hex(mode);
   v_print_nl();
-}
-
-void wait() {
-  while (1) {}
 }

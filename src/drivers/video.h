@@ -11,7 +11,7 @@ unsigned char v_get_mode();
 /**
  * Clear the screen
  */
-void v_clr_scr();
+void v_clr_screen();
 
 /**
  * Move the cursor to a row, column on the screen
@@ -39,6 +39,11 @@ void v_print_hex(unsigned int num);
  * Print a newline at the current cursor location
  */
 void v_print_nl();
+
+/**
+ * Print a single character at the cursor location
+ */
+void v_putch(char character);
 
 /**
  * Set the BIOS video mode

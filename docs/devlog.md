@@ -1,9 +1,13 @@
 # Development Log
 ----
-## September ????, 2018
+## September 22nd, 2018
 Cleaned up the video driver. Not sure if it'll stay how it is but it's a little better now.
 
 I found the bug with v_print_nl - it seems that int 10h does not push/pop and I have to reset the AH/AL/BH/BL parameters each time it's called.
+
+TODO:
+  * Switch to all assembly. This will fix the compilation problems I'm having with Watcom in the build system, make calling more streamlined and make the build smaller (28k or bust).
+  * Move constants out to a shared file (https://stackoverflow.com/a/22583433/1436323)
 
 ## September 3rd, 2018
 Got the Docker build container, CircleCI and deployment working. That is a story for another day. Now you can see the the OS running at http://c-os.chadrempp.com/
