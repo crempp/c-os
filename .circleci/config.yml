@@ -47,11 +47,32 @@ jobs:
           name: Do Test
           command: echo no tests
 
-  deploy:
+  build_and_deploy:
     <<: *DEFAULT
     steps:
       - checkout
       - setup_remote_docker
+      - run:
+          name: Install dependencies
+          command: |
+            echo "No dependencies"
+      - run:
+          name: Build the Builder
+          command: |
+            docker build -t c-os-build-ci -f Dockerfile.ci.build .
+      - run:
+          name: Build the OS
+          command: |
+            docker run -itd --name c-os-ci c-os-build-ci sh
+            docker exec c-os-ci scons
+            docker cp c-os-ci:/app/build .
+            docker cp c-os-ci:/app/pcjs/c-os.json ./pcjs/
+            docker stop c-os-ci
+            docker rm c-os-ci
+      - run:
+          name: Build application Docker image
+          command: |
+            docker build -t lapinlabs/c-os .
       - run:
           name: Push application Docker image
           command: |
@@ -76,7 +97,7 @@ workflows:
           context: deployment
       - build:
           context: deployment
-      - deploy:
+      - build_and_deploy:
           context: deployment
           requires:
             - build

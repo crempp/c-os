@@ -65,6 +65,7 @@ $ docker run --rm -p 8080:8080 c-os
 1. Get ISO building working again
 2. More SCons commands like building ISO or floppy
 3. Fix SCons dependencies so I don't have clean all the time
+4. Update PCjs to new repo and upgrade
 
 ## Docs
 * [Development Log](docs/devlog.md)
