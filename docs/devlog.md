@@ -4,7 +4,9 @@
 ### May 26th 2020
 It's been a while.
 
-The bootloader was still working but the kernel was not being linked correctly. I remember this being an issue last I worked on the OS. After some debugging and research I found a couple of things.
+Where I left off I had converted all the kernel C code to assembly and updated the SConstruct file appropriately. The system was building and booting but not running the kernel code correctly.
+
+When I started today the bootloader was still working but the kernel was not being linked correctly. I remember this being an issue last I worked on the OS. After some debugging and research I found a couple of things.
 
 Bugs:
 1. The linked kernel.bin output had 0x10 null bytes at the beginning.
