@@ -1,11 +1,9 @@
 cpu 8086
 bits 16
 
-global farpeek_
-%define farpeek farpeek_
-
-global farpoke_
-%define farpoke farpoke_
+global farpeek
+global farpoke
+global suspend
 
 segment _TEXT public align=1 use16 class=CODE
 
@@ -56,66 +54,6 @@ farpoke:
 
 
 ; -----------------------------------------------------------------------------
-; Receives an 8-bit value from an I/O location
-;
-; PARAMETERS:
-;   AX - I/O port address
-; RETURN:
-;   AL - Value from port
-; -----------------------------------------------------------------------------
-inb:
-  push dx
-  mov  dx, ax
-  in   al, dx
-  pop  dx
-  ret
-
-
-; -----------------------------------------------------------------------------
-; Receives an 16-bit value from an I/O location
-;
-; PARAMETERS:
-;   AX - I/O port address
-; RETURN:
-;   AX - Value from port
-; -----------------------------------------------------------------------------
-inw:
-  push dx
-  mov  dx, ax
-  in   ax, dx
-  pop  dx
-  ret
-
-
-; -----------------------------------------------------------------------------
-; Sends an 8-bit value on a I/O location.
-;
-; PARAMETERS:
-;   AX - Value to write to port
-;   DX - I/O port address
-; RETURN:
-;   None
-; -----------------------------------------------------------------------------
-outb:
-  out dx, al
-  ret
-
-
-; -----------------------------------------------------------------------------
-; Sends an 16-bit value on a I/O location.
-;
-; PARAMETERS:
-;   AX - Value to write to port
-;   DX - I/O port address
-; RETURN:
-;   None
-; -----------------------------------------------------------------------------
-outw:
-  out dx, ax
-  ret
-
-
-; -----------------------------------------------------------------------------
 ; Put the CPU into a permanent suspended state
 ;
 ; PARAMETERS:
@@ -123,8 +61,6 @@ outw:
 ; RETURN:
 ;   None
 ; -----------------------------------------------------------------------------
-global suspend_
-%define suspend suspend_
 suspend:
   cli
   hlt

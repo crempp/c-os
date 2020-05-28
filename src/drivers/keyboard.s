@@ -7,11 +7,8 @@
 cpu 8086
 bits 16
 
-global install_keyboard_driver_
-%define install_keyboard_driver install_keyboard_driver_
-
-global poll_kbd_buffer_
-%define poll_kbd_buffer poll_kbd_buffer_
+global install_keyboard_driver
+global poll_kbd_buffer
 
 KBD_BUFSIZE equ 32                 ; Keyboard Buffer length. **Must** be a power of 2
                                    ;     Maximum buffer size is 2^15 (32768)

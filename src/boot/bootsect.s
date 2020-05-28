@@ -74,6 +74,7 @@ call print
 ; Load kernel
 mov  bx, KERNEL_OFFSET          ; Read from disk and store in 0x1000
 call kernel_load
+
 call KERNEL_SEGMENT:KERNEL_OFFSET ; Give control to the kernel
 jmp  suspend                    ; suspend if the kernel returns control to us
 
