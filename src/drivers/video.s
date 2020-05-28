@@ -6,32 +6,15 @@
 cpu 8086
 bits 16
 
-global v_clr_screen_
-%define v_clr_screen v_clr_screen_
-
-global v_get_mode_
-%define v_get_mode v_get_mode_
-
-global v_mv_cursor_
-%define v_mv_cursor v_mv_cursor_
-
-global v_print_
-%define v_print v_print_
-
-global v_print_hex_
-%define v_print_hex v_print_hex_
-
-global v_print_nl_
-%define v_print_nl v_print_nl_
-
-global v_putch_
-%define v_putch v_putch_
-
-global v_set_mode_
-%define v_set_mode v_set_mode_
-
-global v_set_page_
-%define v_set_page v_set_page_
+global v_clr_screen
+global v_get_mode
+global v_mv_cursor
+global v_print
+global v_print_hex
+global v_print_nl
+global v_putch
+global v_set_mode
+global v_set_page
 
 ; Basic Constants
 LF  equ 0x0A
@@ -317,6 +300,6 @@ v_set_page:
 
 
 segment _DATA public align=1 use16 class=DATA
-hex_out:     db '0x0000', EOL
-active_page: db 0x0
-newline:     db CR, LF, EOL
+  hex_out:     db '0x0000', EOL
+  active_page: db 0x0
+  newline:     db CR, LF, EOL

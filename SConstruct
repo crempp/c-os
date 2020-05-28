@@ -24,9 +24,6 @@ DISK_SIZE    = 163839 # 163840 - 1
 BOCHS = '~/opt/bochs/bin/bochs'
 QEMU  = '/usr/local/bin/qemu-system-x86_64'
 
-cppbld = Builder(
-    action = '$CC $CCFLAGS $SOURCES -fo=$TARGET')
-
 lnkbld = Builder(
     action = '$LINK @linkerscript.lnk')
 
@@ -50,8 +47,6 @@ isopack = Builder(action='$MKISOFS $ISOFLAGS -b bootsect.bin -o $(BUILD_BASE)/$(
 
 env_kernel = Environment(
     ENV       = os.environ,
-    CC        = 'bwcc',
-    CCFLAGS   = '-0 -zl -s -od -zfp -zgp -wx -wo -ms',
     ASFLAGS   = '-f obj -i./src/lib/',
     LINK      = 'bwlink',
     MKISOFS   = 'mkisofs',
@@ -61,7 +56,6 @@ env_kernel = Environment(
     tools     = ['default', 'nasm'],
     BUILDERS  = {
         'Flp'     : flpbld,
-        'Wcc'     : cppbld,
         'Wlink'   : lnkbld,
         'FlpPad'  : flppad,
         'FlpJSON' : flpjson,
@@ -86,18 +80,11 @@ kernel_s_objs = [
         '%s/%s.o' % (BUILD_KERN, os.path.splitext(os.path.split(str(src))[1])[0]),
         src
     ) for src in KERN_SOURCES]
-KERN_SOURCES = env_kernel.Glob('%s/*.[c]' % SRC_KERNEL) + \
-               env_kernel.Glob('%s/*.[c]' % SRC_DRIVER)
-kernel_c_objs = [
-    env_kernel.Wcc(
-        '%s/%s.o' % (BUILD_KERN, os.path.splitext(os.path.split(str(src))[1])[0]),
-        src
-    ) for src in KERN_SOURCES]
 
 # Link the object files
 env_kernel.Wlink(
     target=KERN_BIN,
-    source=kernel_s_objs + kernel_c_objs)
+    source=kernel_s_objs)
 
 # Build floppy disk image
 env_kernel.Flp(

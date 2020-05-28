@@ -1,15 +1,12 @@
 name build/kernel/kernel.bin      # name of resulting binary
 
 output raw                        # type of binary
-    offset=0x0500                 # specifies the linear base address of the
-                                  # raw output image.
-# NOTE: I had the offset set to 0x0500 (the base of the kernel) but this
-# caused a weird issue when building in Docker where the binary was 4Gb.
-# Setting it to 0x0000 seems to work now.
+
+# The kernel will be loaded into 0x0050:0x0000
+option offset=0x0500
 
 # objects to link
-file build/kernel/kernel-entry.o  # this one has to be first
-file build/kernel/kernel.o
+file build/kernel/kernel.o  # this one has to be first
 file build/kernel/cpu.o
 file build/kernel/video.o
 file build/kernel/keyboard.o
@@ -21,19 +18,20 @@ order                             # order segments be put into binary
         segment _TEXT
     clname DATA
         # Works on Mac
-        segment CONST   segaddr=0x0050 offset=0x72FF
-        segment _DATA   segaddr=0x0050 offset=0x74FF
+        #segment CONST   segaddr=0x0050 offset=0x72FF
+        #segment _DATA   segaddr=0x0050 offset=0x74FF
 
         # Works on linux
-        #segment CONST   segaddr=0x0050 offset=0x74FF
-        #segment _DATA   segaddr=0x0050 offset=0x76FF
+        segment CONST   segaddr=0x0050 offset=0x74FF
+        segment _DATA   segaddr=0x0050 offset=0x76FF
 
         # What to do with this?
         #segment CONST2 segaddr=0x0050 offset=0x0200
 
 option NOCASEEXACT
 option map
-option NODEFAULTLIBS, START=_cstart_
+option NODEFAULTLIBS
 option verbose
+option START=start_               # Fix the W1023 warning
 
 disable 1014                      # `Warning! W1014: stack segment not found`

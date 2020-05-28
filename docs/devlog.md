@@ -1,6 +1,29 @@
 # Development Log
 ----
-## September 22nd, 2018
+
+### May 26th 2020
+It's been a while.
+
+Where I left off I had converted all the kernel C code to assembly and updated the SConstruct file appropriately. The system was building and booting but not running the kernel code correctly.
+
+When I started today the bootloader was still working but the kernel was not being linked correctly. I remember this being an issue last I worked on the OS. After some debugging and research I found a couple of things.
+
+Bugs:
+1. The linked kernel.bin output had 0x10 null bytes at the beginning.
+2. The data segment was starting at 0x20 in the output binary cutting off most of the code
+
+I looked like the kernel map coming out of the linker was messing up the assembly segment locations. My research provided:
+
+* The `offset` parameter to `output` directive does not work like I thought. I thought it meant the offset for code start but when I read the documentation:
+       _specifies that linear addresses below n should be skipped when outputting the executable image._
+I realized it would cut out anything after that offset. Oopsies.
+* I kept getting the error `Warning! W1023: no starting address found, using 0001:0000`. It was just an error but looked mighty similar to the two bugs. I found that adding `start_` to kernel.s and `option START=start_` to linkerscript.lnk fixed the warning but neither bugs.
+
+Finally stumbled upon the `option offset` in the documentation. Adding `option offset=0x00500` fixed both bugs.
+
+Now the switch to assembly only is complete. I'm excited to start working on the kernel again.
+
+### September 22nd, 2018
 Cleaned up the video driver. Not sure if it'll stay how it is but it's a little better now.
 
 I found the bug with v_print_nl - it seems that int 10h does not push/pop and I have to reset the AH/AL/BH/BL parameters each time it's called.
@@ -9,7 +32,7 @@ TODO:
   * Switch to all assembly. This will fix the compilation problems I'm having with Watcom in the build system, make calling more streamlined and make the build smaller (28k or bust).
   * Move constants out to a shared file (https://stackoverflow.com/a/22583433/1436323)
 
-## September 3rd, 2018
+### September 3rd, 2018
 Got the Docker build container, CircleCI and deployment working. That is a story for another day. Now you can see the the OS running at http://c-os.chadrempp.com/
 
 ### July 30th, 2018

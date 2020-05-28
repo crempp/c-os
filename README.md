@@ -37,7 +37,7 @@ We use SCons for building because Make is the worst.
 
 Build the c-os image
 ```
-$ docker build -t c-os-build -f Dockerfile.build .
+$ docker build -t c-os-build -f Dockerfile.local.build .
 ```
 
 Run the build image
